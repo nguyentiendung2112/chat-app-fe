@@ -1,15 +1,37 @@
 import React, { useState } from 'react';
-import { Box, Button, Input, VStack, Heading, FormControl, FormLabel, Text, Link } from '@chakra-ui/react';
+import { Box, Button, Input, VStack, Heading, FormControl, FormLabel, Text, Link, useToast } from '@chakra-ui/react';
 
-const Login = ({ onLogin, onShowRegister }) => {
+const Register = ({ onRegister, onShowLogin }) => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const toast = useToast();
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        if (username.trim() && password.trim()) {
-            onLogin(username, password);
+        if (!username.trim() || !password.trim() || !confirmPassword.trim()) {
+            toast({
+                title: "Error",
+                description: "All fields are required.",
+                status: "error",
+                duration: 3000,
+                isClosable: true,
+            });
+            return;
         }
+
+        if (password !== confirmPassword) {
+            toast({
+                title: "Error",
+                description: "Passwords do not match.",
+                status: "error",
+                duration: 3000,
+                isClosable: true,
+            });
+            return;
+        }
+
+        onRegister(username, password);
     };
 
     return (
@@ -31,7 +53,7 @@ const Login = ({ onLogin, onShowRegister }) => {
             >
                 <VStack spacing={4} as="form" onSubmit={handleSubmit}>
                     <Heading as="h1" size="xl" textAlign="center" color="teal.500">
-                        Welcome to ChatApp
+                        Register
                     </Heading>
                     <FormControl id="username" isRequired>
                         <FormLabel>Username</FormLabel>
@@ -53,18 +75,28 @@ const Login = ({ onLogin, onShowRegister }) => {
                             variant="filled"
                         />
                     </FormControl>
+                    <FormControl id="confirmPassword" isRequired>
+                        <FormLabel>Confirm Password</FormLabel>
+                        <Input
+                            type="password"
+                            placeholder="Confirm your password"
+                            value={confirmPassword}
+                            onChange={(e) => setConfirmPassword(e.target.value)}
+                            variant="filled"
+                        />
+                    </FormControl>
                     <Button
                         type="submit"
                         colorScheme="teal"
                         width="full"
                         mt={4}
                     >
-                        Login
+                        Register
                     </Button>
                     <Text fontSize="sm">
-                        Don't have an account?{' '}
-                        <Link color="teal.500" onClick={onShowRegister}>
-                            Register
+                        Already have an account?{' '}
+                        <Link color="teal.500" onClick={onShowLogin}>
+                            Login
                         </Link>
                     </Text>
                 </VStack>
@@ -73,4 +105,4 @@ const Login = ({ onLogin, onShowRegister }) => {
     );
 };
 
-export default Login;
+export default Register;

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { ChakraProvider } from '@chakra-ui/react';
 import Login from './components/Login';
+import Register from './components/Register';
 import RoomList from './components/RoomList';
 import ChatRoom from './components/ChatRoom';
 import socket from './services/mockSocket';
@@ -8,6 +9,7 @@ import socket from './services/mockSocket';
 function App() {
   const [user, setUser] = useState(null);
   const [currentRoom, setCurrentRoom] = useState(null);
+  const [view, setView] = useState('login');
 
   useEffect(() => {
     // Connect socket on load
@@ -35,7 +37,11 @@ function App() {
   return (
     <ChakraProvider>
       {!user ? (
-        <Login onLogin={handleLogin} />
+        view === 'login' ? (
+          <Login onLogin={handleLogin} onShowRegister={() => setView('register')} />
+        ) : (
+          <Register onRegister={handleLogin} onShowLogin={() => setView('login')} />
+        )
       ) : !currentRoom ? (
         <RoomList onJoinRoom={handleJoinRoom} />
       ) : (
